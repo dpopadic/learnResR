@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1560350606929.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "8A80D5F9",
+    "lastKnownWriteTime" : 1560350733,
+    "last_content_update" : 1560350733188,
+    "path" : "P:/work/github/privRepos/learnResR/data_table_overview.R",
+    "project_path" : "data_table_overview.R",
+    "properties" : {
+        "cursorPosition" : "26,0",
+        "scrollLine" : "2",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
