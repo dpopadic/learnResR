@@ -1,2 +1,2 @@
 # learnResR
-Learning resources for R
+Various learning resources for R
