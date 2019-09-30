@@ -136,16 +136,58 @@ hist(prior$n_visitors)
 sum(prior$n_visitors>=5)/length(prior$n_visitors)
 
 
-
-
 # 3. Why use Bayesian Data Analysis
 # ---------------------------------
+
+# 4 good things with bayes:
+# - you can include information sources in addition to data (expert opinion, background info, common knowledge)
+# - you can make any comparisons between groups or data sets
+# - you can use the result of bayseian analysis to do decision analysis
+# - you can change the underlying statistical model
+
+# including other information sources
+# ---
+# use beta distribution which is bound from 0-1 but can take many different shapes to estimate prior..
+# A Beta(1,1) distribution is the same as a uniform distribution between 0 and 1. It is useful 
+# as a so-called non-informative prior as it expresses than any value from 0 to 1 is equally likely
+beta_sample <- rbeta(n = 1000000, shape1 = 100, shape2 = 20)
+hist(beta_sample, breaks=5)
+# Pick the prior that best captures the information:
+# .. Most ads get clicked on 5% of the time, but for some ads it is as low as 2% and for others as high as 8%.
+beta_sample28 <- rbeta(n = 1000000, shape1 = 5, shape2 = 95)
+hist(beta_sample28, breaks=500)
+
+# previous example with beta-distribution as underlying model..
+n_draws <- 100000
+n_ads_shown <- 100
+proportion_clicks <- rbeta(n_draws, shape1 = 5, shape2 = 95)
+n_visitors <- rbinom(n_draws, size = n_ads_shown, prob = proportion_clicks)
+prior <- data.frame(proportion_clicks, n_visitors)
+posterior <- prior[prior$n_visitors == 13, ]
+
+# plot the prior and the posterior in the same plot..
+par(mfcol = c(2, 1))
+hist(prior$proportion_clicks, xlim = c(0, 0.25))
+hist(posterior$proportion_clicks, xlim = c(0, 0.25))
+
+
+# comparisons between groups
+# ---
+# for example, video vs text adds comparison..
+
+
+
+
 
 
 
 # 4. Bayesian inference with Bayes' theorem
+# -----------------------------------------
+
+
 
 # 5. More parameters, more data, and more Bayes
+# ---------------------------------------------
 
 
 
