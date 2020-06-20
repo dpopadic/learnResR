@@ -1,7 +1,6 @@
 # CODE OPTIMISATION USING C++ IN R
 # -------------------------------------------------------------------------------------------------
 library(Rcpp)
-
 # some key points to keep in mind for r vs c++ ------------------------------------
 # - R is dynamically type language, while c++ is statically typed (eg. once x is defined as
 # double in c++, it cannot be redefined as integer whereas it can in r). Therefore, you need
@@ -10,7 +9,7 @@ library(Rcpp)
 #  body ..
 # }
 # - in c++, indexing starts at 0 (not 1)
-
+# - vectorised functions in r are functions with for loops created in a compiled language like c++
 
 # simple c++ expressions in r basics ----------------------------------------------
 # evaluate whether rcpp is properly setup by evaluating a simple function
@@ -130,15 +129,16 @@ cust_info(-2)
 # looping in c++
 # 4 parts in c++ loops: initialization, continue condition, increment, body
 # for loop example
+
 Rcpp::cppFunction("int forl(int x){
-// sum all numbers up to x
-int res=0;
-for(int i=0; i<=x; i++){
-  // exit loop early if x<0
-  if(x<0) break;
-  res=res+i;
-}
-return res;
+  // sum all numbers up to x
+  int res=0;
+  for(int i=0; i<=x; i++){
+    // exit loop early if x<0
+    if(x<0) break;
+    res=res+i;
+  }
+  return res;
 }")
 
 forl(3)
@@ -277,11 +277,87 @@ Rcpp::cppFunction("std::vector<double> ret_pos(NumericVector x) {
 y <- ret_pos(x = rnorm(1000))
 
 
+# some utility function examples ---------------------------------------------------------
+
+# last non-na observation carried forward
+Rcpp::cppFunction("NumericVector na_locf_fwd(NumericVector x) {
+  double z = NumericVector::get_na();
+  int n = x.size();
+  NumericVector res = clone(x);
+  for(int i = 0; i < n; i++) {
+    if(NumericVector::is_na(x[i])) {
+      res[i] = z;
+    } else {
+      z = x[i];
+    }
+  } 
+  return res ;
+}")
+
+x <- stats::rnorm(1000)
+x[sample(1000, size = 10)] <- NA
+y <- na_locf_fwd(x = x)
 
 
+# mean of last observations carried forward
+Rcpp::cppFunction("NumericVector na_locf_mean(NumericVector x) {
+  double z = 0.0;
+  double n_not_na = 0.0;
+  NumericVector res = clone(x);
+  
+  int n = x.size();
+  for(int i = 0; i < n; i++) {
+    if(NumericVector::is_na(x[i])) {
+      res[i] = z / n_not_na;
+    } else {
+      z += x[i];
+      n_not_na++;
+    }
+  }  
+  return res;
+}")
+
+y <- na_locf_mean(x = x)
 
 
+# an econometric arma(p, q) model
+Rcpp::cppFunction('NumericVector arma(
+  int n, 
+  double mu, 
+  NumericVector phi, 
+  NumericVector theta, 
+  double sd) {
+  int p = phi.size();
+  int q = theta.size();   
+  NumericVector x(n);
+  
+    //  noise vector
+    NumericVector eps = rnorm(n, 0.0, sd);
+    // start at the max of p and q + 1
+    int start = std::max(p, q) + 1;
+    for(int i = start; i < n; i++) {
+      // mean + noise
+      double val = mu + eps[i];
+      
+      // ma(q) part
+      for(int j = 0; j < q; j++) {
+        val += theta[j] * eps[i - j - 1];
+      }
+      
+      // ar(p) part
+      for(int j = 0; j < p; j++) {
+        val += phi[j] * x[i - j - 1];
+      }
+      
+      x[i] = val;
+    }
+  return x;
+}')
 
+# simulate an arma process
+mod <- arma(n = 50, mu = 5, phi = c(1, -0.2), theta = c(1, -0.2), sd = 1)
+df <- data.frame(x = 1:50, y = mod)
+ggplot2::ggplot(df, ggplot2::aes(x, y)) + ggplot2::geom_line()
 
 
 
