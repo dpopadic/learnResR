@@ -2,6 +2,16 @@
 # -------------------------------------------------------------------------------------------------
 library(Rcpp)
 
+# some key points to keep in mind for r vs c++ ------------------------------
+# - R is dynamically type language, while c++ is statically typed (eg. once x is defined as
+# double in c++, it cannot be redefined as integer whereas it can in r). Therefore, you need
+# to declare the variables types in a c++ function as well as the type of the returned object:
+# double sum(double x, double y) {
+#  body ..
+# }
+
+
+
 # simple c++ expressions in r basics ----------------------------------------
 # evaluate whether rcpp is properly setup by evaluating a simple function
 Rcpp::evalCpp("40 + 20")
@@ -28,6 +38,32 @@ all.equal(sum_loop(x), sum(x))
 # compare the performance
 microbenchmark::microbenchmark(sum_loop = sum_loop(x), 
                                r_sum = sum(x))
+
+
+# custom user-defined functions -----------------------------------------------
+# define a custom function
+Rcpp::cppFunction("int ft(){
+                  int x = 66;
+                  return x;}")
+# call the function
+ft()
+
+# compare 2 equivalent functions
+# c++ 
+Rcpp::cppFunction("double add_cpp(double x, double y){
+                  double res = x + y;
+                  return res;}")
+# r
+add_r <- function(x, y)
+  return(x + y)
+
+# compare performance
+microbenchmark::microbenchmark(ev_cpp = add_cpp(x, y), 
+                               ev_r = add_r(x, y))
+
+
+
+
 
 
 
