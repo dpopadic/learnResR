@@ -4,14 +4,17 @@ library(ggplot2)
 library(dplyr)
 library(purrr)
 library(forcats)
-library(ggjoy)
+library(ggridges)
 
 # 1. What is Bayesian Data Analysis
 # ---------------------------------
 # A method for figuring out unobservable quantities given known facts that uses probability to describe
 # the uncertainty over what the values of the unknown quantities could be.
 # probabilistic inference := bayesian inference
-prop_model<- function(data = c(), prior_prop = c(1, 1), n_draws = 10000, show_plot = TRUE) {
+prop_model <- function(data = c(), 
+                       prior_prop = c(1, 1), 
+                       n_draws = 10000, 
+                       show_plot = TRUE) {
   check_factor <- function(f) {
     if (is.character(f)) {
       factor(f)
@@ -67,7 +70,7 @@ prop_model<- function(data = c(), prior_prop = c(1, 1), n_draws = 10000, show_pl
 # ..assume you just flipped a coin 13x and the result was heads, tails, tails, heads, tails etc.:
 data <- c(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 prop_model(data)
-posterior<- prop_model(data)
+posterior <- prop_model(data)
 hist(posterior, breaks = 30, xlim = c(0, 1), col = "palegreen4")
 median(posterior)
 quantile(posterior, c(0.05, 0.95)) # 95% CI
@@ -103,7 +106,7 @@ sum(data) / length(data)
 # .. this is a binomial process:
 rbinom(n = 1, size = 100, prob = 0.42) / 100
 # repeat 200x:
-data2<- rbinom(n = 200, size = 100, prob = 0.42) / 100
+data2 <- rbinom(n = 200, size = 100, prob = 0.42) / 100
 
 # representing uncertainty with priors..
 # ---
@@ -122,7 +125,7 @@ plot(prior)
 # ---
 # You ran your ad campaign, and 13 people clicked and visited your site when the ad was shown a 100 times. 
 # You would now like to use this new information to update the Bayesian model.
-posterior<- prior[prior$n_visitors == 13, ]
+posterior <- prior[prior$n_visitors == 13, ]
 hist(posterior$proportion_clicks)
 # .. now we want to use this updated proportion_clicks to predict how many visitors we would get if we reran 
 # the ad campaign
@@ -133,7 +136,7 @@ n_ads_shown <- 100
 prior$n_visitors <- rbinom(n_samples, size = n_ads_shown, prob = prior$proportion_clicks)
 hist(prior$n_visitors)
 # calculate the probability that you will get 5 or more visitors
-sum(prior$n_visitors>=5)/length(prior$n_visitors)
+sum(prior$n_visitors >= 5)/length(prior$n_visitors)
 
 
 # 3. Why use Bayesian Data Analysis
@@ -142,7 +145,7 @@ sum(prior$n_visitors>=5)/length(prior$n_visitors)
 # 4 good things with bayes:
 # - you can include information sources in addition to data (expert opinion, background info, common knowledge)
 # - you can make any comparisons between groups or data sets
-# - you can use the result of bayseian analysis to do decision analysis
+# - you can use the result of bayesian analysis to do decision analysis
 # - you can change the underlying statistical model
 
 # including other information sources
@@ -150,17 +153,17 @@ sum(prior$n_visitors>=5)/length(prior$n_visitors)
 # use beta distribution which is bound from 0-1 but can take many different shapes to estimate prior..
 # A Beta(1,1) distribution is the same as a uniform distribution between 0 and 1. It is useful 
 # as a so-called non-informative prior as it expresses than any value from 0 to 1 is equally likely
-beta_sample <- rbeta(n = 1000000, shape1 = 100, shape2 = 20)
-hist(beta_sample, breaks=5)
+beta_sample <- stats::rbeta(n = 1000000, shape1 = 100, shape2 = 20)
+hist(beta_sample, breaks = 5)
 # Pick the prior that best captures the information:
 # .. Most ads get clicked on 5% of the time, but for some ads it is as low as 2% and for others as high as 8%.
-beta_sample28 <- rbeta(n = 1000000, shape1 = 5, shape2 = 95)
-hist(beta_sample28, breaks=500)
+beta_sample28 <- stats::rbeta(n = 1000000, shape1 = 5, shape2 = 95)
+hist(beta_sample28, breaks = 500)
 
 # previous example with beta-distribution as underlying model..
 n_draws <- 100000
 n_ads_shown <- 100
-proportion_clicks <- rbeta(n_draws, shape1 = 5, shape2 = 95)
+proportion_clicks <- stats::rbeta(n_draws, shape1 = 5, shape2 = 95)
 n_visitors <- rbinom(n_draws, size = n_ads_shown, prob = proportion_clicks)
 prior <- data.frame(proportion_clicks, n_visitors)
 posterior <- prior[prior$n_visitors == 13, ]
@@ -176,14 +179,34 @@ hist(posterior$proportion_clicks, xlim = c(0, 0.25))
 # for example, video vs text adds comparison..
 
 
-
-
-
+# changing underlying distribution: poisson distribution
+# ---
+# 1 parameter: average number of events per unit
+x <- rpois(n = 10000, lambda = 3)
+# Let's say that you run an ice cream stand and on cloudy days you on 
+# average sell 11.5 ice creams. It's a cloudy day. Change the rpois call 
+# to visualize the probability distribution over how many ice creams you'll sell.
+x <- rpois(n = 10000, lambda = 11.5)
+# It's still a cloudy day, and unfortunately, you won't break even unless you 
+# sell 15 or more ice creams. Assuming the Poisson model is reasonable, use x 
+# to calculate the probability that you'll break even.
+sum(x >= 15) / length(x)
 
 
 # 4. Bayesian inference with Bayes' theorem
 # -----------------------------------------
-
+# probability review with 52 card deck..
+# prob(4 aces):
+4/52 * 3/51 * 2/50 * 1/49 # using product rule
+# fast calculation of probabilities: prob(visitors=13 | prob_success=0.10) given 100 adds
+x <- rbinom(n = 10000, size = 100, prob = 0.1)
+sum(x == 13) / length(x)
+# alternatively, use dbinom:
+dbinom(x = 13, size = 100, prob = 0.1)
+# probabilities for a range of visitors:
+v <- seq(0, 100, by = 1)
+y <- dbinom(x = v, size = 100, prob = 0.1)
+plot(v, y, type = "h")
 
 
 # 5. More parameters, more data, and more Bayes
