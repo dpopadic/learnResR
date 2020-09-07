@@ -124,6 +124,32 @@ what_am_i(kitty)
 
 
 
+# R6 Principles
+# -------------
+library(R6)
+# data and objects can be stored in the same variable in R6
+# some conventions:
+# - define class generators with R6Class()
+# - class-names should be UpperCamelCase
+# - data fields stored in private list
+# - create object with $new method
+
+# encapsulation: separating implementation from UI
+# - store data in private list
+# - store functions in public list
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
