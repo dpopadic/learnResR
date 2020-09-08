@@ -17,6 +17,9 @@ summary(a_factor)
 
 
 # overview of 9 oop systems in R: ReferenceClasses, OOP, S3, S4, R5, R6, mutatr, proto, R.oo
+# functional oop (objects contain data, class methods seperate from objects, not mutable): S3, S4
+# encapsulated oop (objects contain data & methods, mutable): r6, ReferenceClasses
+
 # - R5 and mutatr were experimental frameworks and difficult to use now
 # - oop no longer availability
 # - proto no longer used really (was used in ggplot2)
@@ -28,7 +31,7 @@ summary(a_factor)
 # - ReferenceClasses tries to emulate oop structure found in Java/C sharp (encapsulation, inheritance)
 # - R6 is similar to ReferenceClasses but in a simpler way and is higher performance 
 # in summary, use S3 in most cases and for more powerful requirements, use R6.
-
+# also note while S3 mainly consists of polymorphism, R6 implements polymorphism, encapsulation & inheritance
 # how r differentiates between objects
 mat <- matrix(rnorm(12), 3)
 # r class
@@ -122,6 +125,30 @@ what_am_i.character <- function(x, ...){
 what_am_i(kitty)
 
 
+# the idea of an object is really just to bundle data and corresponding methods together:
+mo <- list(x = 5, get_x = function() "x was 5")
+class(mo) <- "myClass"
+class(mo)
+mo$x
+mo$get_x()
+
+# however, this can lead to confusing & hard to debug code and therefore constructors should be used:
+# a constructor for myClass...
+myClass <- function(x){
+  structure(class = "myClass", list(
+    # attributes
+    x = x,
+    # methods
+    get_x = function() paste("x was", x)
+  ))
+}
+
+mo <- myClass(7)
+class(mo)
+mo$x
+mo$get_x()
+
+
 
 
 # R6 Principles
@@ -137,8 +164,26 @@ library(R6)
 # encapsulation: separating implementation from UI
 # - store data in private list
 # - store functions in public list
+# - active bindings (to allow controlled access to private fields)
+# use-cases: shiny, dplyr, processx
 
 
+# a basic R6 class example:
+
+Accumulator <- R6::R6Class("Accumulator",
+                           public = list(
+                             sum = 0,
+                             add = function(x) {
+                               self$sum <- self$sum + x # use self to access object properties
+                               invisible(self)
+                             }
+                           )
+)
+# create instance of a class
+x <- Accumulator$new()
+x$add(4)
+x$add(10)$add(10)
+x$sum
 
 
 
