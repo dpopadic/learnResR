@@ -185,6 +185,16 @@ x$add(4)
 x$add(10)$add(10)
 x$sum
 
+# accessing fields in R6 classes:
+# - private$ accesses private fields
+# - self$ accesses public methods in self
+# - super$ accesses public methods in parent
+
+# inheritance: when a class is inherited, methods can either be overwritten (give same name) or 
+# extended (give new name)
+
+
+# environments: copy by reference (in contrast to lists which are copy by value)
 
 
 
