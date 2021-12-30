@@ -28,13 +28,17 @@ Various resources for R
 
 &emsp;[`Supervised Learning - Classification`](ml_supervised_learning_class.R)
 
+**API's**
+
+&emsp;[`plumber`](plumber_.md)
+
 
 **Big Data**
 
 &emsp;[`sparklyR`](spark_basics.R)
 
 
-**Other**
+**Empirical Analysis**
 
 &emsp;[`Simulations`](simulation.R)
 
