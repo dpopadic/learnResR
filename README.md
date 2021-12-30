@@ -1,16 +1,42 @@
 # learnResR
-Various learning resources for R
+Various resources for R
 
-> data manipulation basics: `data_table_overview`
+**Data Manipulation**
 
-> object oriented programming: `oop`
+&emsp;[`data.table`](data_table_overview.R)
 
-> package dev notes: `pkg_notes`
 
-> code optimisation with C++: `rcpp_code_opt`
+**Object Oriented Programming & Packages**
 
-> machine learning basics: `ml_toolbox`, `ml_unsupervised_learning`, `ml_supervised_learning_reg`, `ml_supervised_learning_class`
+&emsp;[`OOP using S3, R6`](oop.R)
 
-> big data management: `spark_basics`
+&emsp;[`package development notes`](oop.R)
 
-> other: `simulation`, `volatility_modelling`
+
+**Code Optimisation**
+
+&emsp;[`code optimisation with C++`](rcpp_code_opt.R)
+
+
+**Machine Learning**
+
+&emsp;[`Toolbox`](ml_toolbox.R)
+
+&emsp;[`Unsupervised Learning`](ml_unsupervised_learning.R)
+
+&emsp;[`Supervised Learning - Regression`](ml_supervised_learning_reg.R)
+
+&emsp;[`Supervised Learning - Classification`](ml_supervised_learning_class.R)
+
+
+**Big Data**
+
+&emsp;[`sparklyR`](spark_basics.R)
+
+
+**Other**
+
+&emsp;[`Simulations`](simulation.R)
+
+&emsp;[`Volatility modelling`](volatility_modelling.R)
+
