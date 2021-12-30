@@ -36,7 +36,7 @@ The output of `res` is in this case a list containing all the information return
 
 Traditionally,  moving models (or R code) into production required either translating the work done in R into another 
 language or running batch processes and storing the data in a database. The former is costly and the latter works but model output is served with a lag (running interactive simulations is not possible using this approach). The _optimal 
-solution is to expose the R code as a service_. Furthermore, this software as a service framework allows data scientists to do their work in any programming language of which the downstream consumers of these APIs require no knowledge of. The [`plumber`](https://rviews.rstudio.com/2018/07/23/rest-apis-and-plumber/) package provides a framework to create REST API's. 
+solution is to expose the R code as a service_. Furthermore, this software as a service framework allows data scientists to do their work in any programming language of which the downstream consumers of these APIs require no knowledge of. The [`plumber`](https://rviews.rstudio.com/2018/07/23/rest-apis-and-plumber/) package provides a framework to create REST API's in R. In Python, we can use [`FastAPI`](https://fastapi.tiangolo.com/).
 
 <ins>_Example:_</ins> `plumber.R`
 
